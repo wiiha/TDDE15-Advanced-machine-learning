@@ -80,7 +80,7 @@ bn.hc.arc.3 <- hc(x = asia, start=init)
 
 plot(bn.hc.arc.0, main="arc.set 0")
 plot(bn.hc.arc.1, main="arc.set 1")
-plot(bn.hc.arc.2, main="arc.set 3")
+plot(bn.hc.arc.2, main="arc.set 2")
 plot(bn.hc.arc.3, main="arc.set 3")
 
 ## Finding: If the initial structure just has one or two directed arces the hc process seem to
@@ -107,4 +107,6 @@ plot(bn.hc.s.3, main= paste("Scoring method:",score.methodes[3]))
 plot(bn.hc.s.4, main= paste("Scoring method:",score.methodes[4]))
 
 ## Finding: This method resulted in the larges differences between each final graph.
+
+# Conclusion: The hill-climbing algorithm starts at a random point in the data and from there walks
 
