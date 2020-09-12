@@ -200,6 +200,8 @@ conf.true <- make.confusion.matrix(test[,"S"],prediction.true)
 
 ```
 
+Below the learned sturcture and the true structure is presented for comparision.
+
 ```{r}
 plot(bn.structure, main="Learned structure")
 ```
@@ -211,10 +213,13 @@ plot(bn.true.structure, main="True structure")
 
 
 ```{r}
+print("Confusion matrix using learned structure")
 print(conf.own)
+print("Confusion matrix using true structure")
 print(conf.true)
 ```
 
+**Finding:** As one can observed, the two confusion matrices are the same even thou the structure used for prediction was not.
 
 
 # Task 3
@@ -232,12 +237,22 @@ conf.true <- make.confusion.matrix(test[,"S"],prediction.true)
 
 ```
 
+```{r}
+print("Markow blanket for learned structure")
+print(mb(bn.structure,"S"))
+print("Markow blanket for true structure")
+print(mb(bn.true.structure,"S"))
+```
+
 
 ```{r}
+print("Confusion matrix using learned structure")
 print(conf.own)
+print("Confusion matrix using true structure")
 print(conf.true)
 ```
 
+**Finding:** As one can observed, the two confusion matrices are the same when the Markow blanket for eact sturcture was used.
 
 #Task 4
 
@@ -266,16 +281,22 @@ conf.own <- make.confusion.matrix(test[,"S"],prediction.own)
 
 ```
 
+In the figure below is the Naive Bayes structure for the BN.
+
 ```{r}
-plot(bn.structure)
+# plot(bn.structure)
+graphviz.plot(bn.structure, layout = "neato")
 ```
 
+Below is the confusion matrix for the Naive Bayes classifier presented.
 ```{r}
 print(conf.own)
 print(prop.table(conf.own))
 ```
 
+# Task 5
 
+*Explain why you obtain the same or different results in the exercises (2-4).*
 
 \newpage
 
