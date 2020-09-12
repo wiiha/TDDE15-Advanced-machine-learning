@@ -4,13 +4,11 @@ library(gRain)
 
 source("./helper-functions.R")
 
-### TASK 2 ###
-# Learn a BN from 80 % of the Asia dataset.
-# Use the BN learned to classify the remaining 20 % of
-# the Asia dataset in two classes: S = yes and S = no.
-# Use exact or approximate inference with the help of the bnlearn and gRain packages,
-# you are not allowed to use functions such as predict.
-# Report the confusion matrix; true/false positives/negatives.
+### TASK 3 ###
+# In the previous exercise, S was classified using observations for all the rest of the variables.
+# S should be classified by using only observations for the so-called Markov blanket of S,
+# i.e. its parents plus its children plus the parents of its children minus S itself.
+# Report again the confusion matrix.
 
 set.seed(2020)
 
@@ -45,8 +43,8 @@ junction.tree.own <- compile(bn.fitted.grain)
 junction.tree.true <- compile(bn.true.fitted.grain)
 
 # Making predictions using helper-function (separate file)
-prediction.own <- predictfunction(junction.tree.own,test,"S")
-prediction.true <- predictfunction(junction.tree.true,test,"S")
+prediction.own <- predictfunction(junction.tree.own,test,"S", bn.for.markowblanket = bn.structure)
+prediction.true <- predictfunction(junction.tree.true,test,"S", bn.for.markowblanket = bn.true.structure)
 
 # Comparing predictions with true values
 conf.own <- make.confusion.matrix(test[,"S"],prediction.own)

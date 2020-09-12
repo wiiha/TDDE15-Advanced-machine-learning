@@ -28,9 +28,13 @@ set.seed(567)
 bn.hc.100 <- hc(x = asia, restart = 100)
 
 plot(bn.hc.10, main="Random restarts: 10")
+plot(cpdag(bn.hc.10), main="Random restarts: 10")
 plot(bn.hc.5, main="Random restarts: 5")
+plot(cpdag(bn.hc.5), main="Random restarts: 5")
 plot(bn.hc.1, main="Random restarts: 1")
+plot(cpdag(bn.hc.1), main="Random restarts: 1")
 plot(bn.hc.100, main="Random restarts: 100")
+plot(cpdag(bn.hc.100), main="Random restarts: 100")
 
 print(all.equal(bn.hc.10,bn.hc.5))
 print(all.equal(bn.hc.10,bn.hc.1))
