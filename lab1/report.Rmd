@@ -1,7 +1,7 @@
 ---
 title: "TDDE15 - LAB 1"
-author: "Wilhelm Hansson"
-date: "2020-09-12"
+author: "Wilhelm Hansson (wilha431)"
+date: "2020-09-13"
 output: pdf_document
 ---
 
@@ -23,136 +23,41 @@ data("asia")
 
 ```{r 1_1, include=FALSE}
 # Testing different random restarts
-set.seed(567)
-bn.hc.5 <- hc(x = asia, restart = 5)
-
-set.seed(567)
-bn.hc.10 <- hc(x = asia, restart = 10)
-
-set.seed(567)
-bn.hc.1 <- hc(x = asia, restart = 1)
-
-set.seed(567)
-bn.hc.100 <- hc(x = asia, restart = 100)
-
-```
-
-```{r}
-plot(bn.hc.10, main="Random restarts: 10")
-```
-
-```{r}
-plot(bn.hc.5, main="Random restarts: 5")
-```
-
-```{r}
-plot(bn.hc.1, main="Random restarts: 1")
-```
-
-```{r}
-plot(bn.hc.100, main="Random restarts: 100")
-```
-
-```{r 1_2, include=FALSE}
 nodes <- colnames(asia)
 init <- empty.graph(nodes)
-print(init)
-
+set.seed(567)
 arc.set.1 = matrix(c("A", "S", "X", "D", "E", "X", "X", "T"),
                    ncol = 2, byrow = TRUE,
                    dimnames = list(NULL, c("from", "to")))
-print(arc.set.1)
-
-arc.set.2 = matrix(c("B", "D", "X", "D"),
-                   ncol = 2, byrow = TRUE,
-                   dimnames = list(NULL, c("from", "to")))
-print(arc.set.2)
-
-arc.set.3 = matrix(c("S", "A"),
-                   ncol = 2, byrow = TRUE,
-                   dimnames = list(NULL, c("from", "to")))
-print(arc.set.3)
-
-
-set.seed(234)
-bn.hc.arc.0 <- hc(x = asia)
-
-set.seed(234)
 arcs(init) = arc.set.1
-print(init)
-bn.hc.arc.1 <- hc(x = asia, start=init)
+bn1 <- hc(x = asia, restart = 1, start=init, score = "bic")
+cpdag.bn1 <- cpdag(bn1)
 
-set.seed(234)
+set.seed(567)
+arc.set.2 = matrix(c("S", "A"),
+                   ncol = 2, byrow = TRUE,
+                   dimnames = list(NULL, c("from", "to")))
 arcs(init) = arc.set.2
-print(init)
-bn.hc.arc.2 <- hc(x = asia, start=init)
-
-set.seed(234)
-arcs(init) = arc.set.3
-print(init)
-bn.hc.arc.3 <- hc(x = asia, start=init)
-```
-
-```{r}
-plot(bn.hc.arc.0, main="arc.set 0")
-```
-
-```{r}
-plot(bn.hc.arc.1, main="arc.set 1")
-```
-
-```{r}
-plot(bn.hc.arc.2, main="arc.set 2")
-```
-
-```{r}
-plot(bn.hc.arc.3, main="arc.set 3")
-```
-
-*Finding: If the initial structure just has one or two directed arcs the hc process seem to fallback to the same final graph*
-
-```{r 1_3, include=FALSE}
-# Testing different scoring methodes
-score.methodes = c("bic","loglik","aic","mbde")
-
-set.seed(173)
-bn.hc.s.1 <- hc(x = asia, score = score.methodes[1])
-
-set.seed(173)
-bn.hc.s.2 <- hc(x = asia, score = score.methodes[2])
-
-set.seed(173)
-bn.hc.s.3 <- hc(x = asia, score = score.methodes[3])
-
-set.seed(173)
-bn.hc.s.4 <- hc(x = asia, score = score.methodes[4])
+bn2 <- hc(x = asia, restart = 100, start=init, score = "mbde")
+cpdag.bn2 <- cpdag(bn2)
 
 ```
 
 ```{r}
-
-plot(bn.hc.s.1, main= paste("Scoring method:",score.methodes[1]))
-
+plot(cpdag.bn1, main="PDAG | 1 restart, scoring BIC")
 ```
+
 
 ```{r}
-plot(bn.hc.s.2, main= paste("Scoring method:",score.methodes[2]))
-
+plot(cpdag.bn2, main="PDAG | 100 restart, scoring mbde")
 ```
+
 
 ```{r}
-plot(bn.hc.s.3, main= paste("Scoring method:",score.methodes[3]))
-
+all.equal(cpdag.bn1,cpdag.bn2)
 ```
 
-```{r}
-plot(bn.hc.s.4, main= paste("Scoring method:",score.methodes[4]))
-
-```
-
-*Finding: This method resulted in the larges differences between each final graph.*
-
-**Conclusion:** The chaining of scoring method seem to have largest impact when learning the structure of a BN. However, the number of random restarts also seem to contribute to the final BN. These findings align with the fact that the hill-climbing algorithm starts at a random point in graph space and the tries different graphs and evaluate the score for each of these graphs. By doing multiple restarts more of graph space is explored. Further one can notice that the *log-likelihood* scoring function produced a graph with many edges. A graph with many edges can be interpreted as an overfitted model. *BIC* and *AIC* solve this by implementing a constraint/ punishment to the score. Both methodes can be found in the paper by Koski and  Noble (2012).
+**Conclusion:** The chaining of scoring method seem to have largest impact when learning the structure of a BN. However, the number of random restarts also seem to contribute to the final BN. These findings align with the fact that the hill-climbing algorithm starts at a random point in graph space and the tries different graphs and evaluate the score for each of these graphs. By doing multiple restarts more of graph space is explored. A graph with many edges can be interpreted as an overfitted model. *BIC* solve this by implementing a penelty to the score based on number of edges. More info can be found in the paper by Koski and  Noble (2012).
 
 
 
@@ -210,6 +115,10 @@ plot(bn.structure, main="Learned structure")
 ```{r}
 plot(bn.true.structure, main="True structure")
 ```
+```{r}
+print("Comparing PDAG of learned structure and true structure.")
+all.equal(cpdag(bn.true.structure),cpdag(bn.structure))
+```
 
 
 ```{r}
@@ -219,7 +128,7 @@ print("Confusion matrix using true structure")
 print(conf.true)
 ```
 
-**Finding:** As one can observed, the two confusion matrices are the same even thou the structure used for prediction was not.
+**Finding:** As one can observed, the two confusion matrices are the same even when the structure used for prediction was not. The assumed reason is discussed further in *Task 5*.
 
 
 # Task 3
@@ -252,9 +161,9 @@ print("Confusion matrix using true structure")
 print(conf.true)
 ```
 
-**Finding:** As one can observed, the two confusion matrices are the same when the Markow blanket for eact sturcture was used.
+**Finding:** As one can observed, the same prediction is made which can be expected since the Markow blanket and thereby the nodes used for prediction is the same.
 
-#Task 4
+# Task 4
 
 *Repeat the exercise (2) using a naive Bayes classifier, i.e. the predictive variables are independent given the class variable. Model the naive Bayes classifier as a BN. You have to create the BN by hand.*
 
@@ -291,16 +200,26 @@ graphviz.plot(bn.structure, layout = "neato")
 Below is the confusion matrix for the Naive Bayes classifier presented.
 ```{r}
 print(conf.own)
-print(prop.table(conf.own))
 ```
 
 # Task 5
 
 *Explain why you obtain the same or different results in the exercises (2-4).*
 
+
+The reason for the confusion matrices being the same in task 2 and task 3 is because the dependence of “S” is the same in both cases, “L” and “B” (which is the Markow blanket for S). With knowledge about the state of L and B we have full information about "S" and therefore the prediction is the same for the whole network as for the Markow blanket.
+
+The confusion matrix is different in task 4 because of completely different dependency structure, all nodes are only dependent on S and thereby conditionally independent given S (tail-to-tail). We know that this is not the true dependecy structure and cacn therefore expect other predictions.
+
 \newpage
 
 # Appendix for code
 
+## Main code
+
 ```{r, code=readLines("lab1-full.R"), echo=TRUE, eval=FALSE}
+```
+
+## Helper functions
+```{r, code=readLines("helper-functions.R"), echo=TRUE, eval=FALSE}
 ```

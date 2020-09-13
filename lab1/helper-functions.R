@@ -31,7 +31,7 @@ predictfunction <- function(junction.tree, data, target, bn.for.markowblanket = 
 
 
 make.confusion.matrix <- function(true.values,predicted.values){
-  return(table(true=true.values,prediction=predicted.values))
+  return(table("true values"=true.values,prediction=predicted.values))
 }
 
 info <- function(bn, score.method = ""){
