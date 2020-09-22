@@ -1,0 +1,18 @@
+---
+title: "TDDE15 - Lab 2"
+author: "Wilhelm Hansson (wilha431)"
+date: "9/22/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+\newpage
+
+## Appendix for code
+
+```{r, code=readLines("lab2-code.R"), echo=TRUE, eval=FALSE}
+```
