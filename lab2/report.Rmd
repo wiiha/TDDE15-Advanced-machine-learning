@@ -67,7 +67,7 @@ hmm.model <-
 
 ```
 
-using the information given in the scenario a HMM model is designed. Below is the HMM model object in R presented.
+Using the information given in the scenario a HMM model is designed. Below is the HMM model object in R presented.
 
 ```{r}
 print(hmm.model)
