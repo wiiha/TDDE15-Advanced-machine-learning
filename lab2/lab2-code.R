@@ -16,7 +16,6 @@ transProbs <- diag(0.5, length(states))
 for (i in 1:nrow(transProbs)) {
   row = i
   col = ifelse(i == ncol(transProbs), 1, i + 1)
-  print(paste(row, ",", col))
   transProbs[row, col] = 0.5
 }
 transProbs
@@ -31,11 +30,9 @@ for (r in 1:nrow(emissionProbs)) {
   
   for (c in emission.interval) {
     col = r + c
-    print(paste("col:", col, "r", r, "c", c))
     col = col %% length(symbols)
     if (col == 0)
       col = ncol(emissionProbs)
-    print(paste(row, ",", col))
     emissionProbs[row, col] = (1 / length(emission.interval))
   }
 }

@@ -7,6 +7,334 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+
+library(HMM)
+library(entropy)
+```
+
+**Given scenario**
+
+*Model the behavior of a robot that walks around a ring. The ring is divided into 10 sectors. At any given time point, the robot is in one of the sectors and decides with equal probability to stay in that sector or move to the next sector. You do not have direct observation of the robot. However, the robot is equipped with a tracking device that you can access. The device is not very accurate though: If the robot is in the sector i, then the device will report that the robot is in the sectors [i - 2, i + 2] with equal probability.*
+
+# 1
+
+*Build a hidden Markov model (HMM) for the scenario described above.*
+
+```{r 1_1}
+# TASK 1
+
+states <- seq(1, 10)
+symbols <- seq(1, 10)
+
+## Setting start prob vector
+startProbs <- rep(1 / length(states), length(states))
+
+## Building transition prob matrix
+transProbs <- diag(0.5, length(states))
+for (i in 1:nrow(transProbs)) {
+  row = i
+  col = ifelse(i == ncol(transProbs), 1, i + 1)
+  transProbs[row, col] = 0.5
+}
+
+## Building emission prob matrix
+emission.interval <- seq(from = -2, to = 2, by = 1)
+emissionProbs <-
+  diag(1 / length(emission.interval), length(symbols))
+
+for (r in 1:nrow(emissionProbs)) {
+  row = r
+  
+  for (c in emission.interval) {
+    col = r + c
+    col = col %% length(symbols)
+    if (col == 0)
+      col = ncol(emissionProbs)
+    emissionProbs[row, col] = (1 / length(emission.interval))
+  }
+}
+
+## Creating HMM model
+
+hmm.model <-
+  initHMM(
+    States = states,
+    Symbols = symbols,
+    startProbs = startProbs,
+    transProbs = transProbs,
+    emissionProbs = emissionProbs
+  )
+
+```
+
+using the information given in the scenario a HMM model is designed. Below is the HMM model object in R presented.
+
+```{r}
+print(hmm.model)
+```
+
+
+# 2
+
+*Simulate the HMM for 100 time steps.*
+
+Now 100 time steps are simulated and the result of the simulation can be found below.
+
+```{r 2_1}
+set.seed(123123)
+
+simulation.result <- simHMM(hmm.model, 100)
+
+simulation.result
+```
+
+
+# 3
+
+*Discard the hidden states from the sample obtained above. Use the remaining observations to compute the filtered and smoothed probability distributions for each of the 100 time points. Compute also the most probable path.*
+
+```{r}
+observations <- simulation.result$observation
+
+most.probable.path <- viterbi(hmm.model, observations)
+
+
+func.filter <- function(alphas) {
+  outdata <- c()
+  for (r in 1:nrow(alphas)) {
+    outdata <- rbind(outdata, alphas[r, ] / sum(alphas[r, ]))
+  }
+  return(outdata)
+}
+
+func.smooth <- function(alphas, betas) {
+  outdata <- c()
+  for (r in 1:nrow(alphas)) {
+    outdata <-
+      rbind(outdata, (alphas[r, ] * betas[r, ]) / sum((alphas[r, ] * betas[r, ])))
+  }
+  return(outdata)
+}
+
+log.forward.probabilities <- forward(hmm.model, observations)
+
+forward.probabilities <- exp(log.forward.probabilities)
+
+log.backward.probabilities <- backward(hmm.model, observations)
+
+backward.probabilities <- exp(log.backward.probabilities)
+
+filtered.prob <- func.filter(forward.probabilities)
+
+smooth.prob <-
+  func.smooth(forward.probabilities, backward.probabilities)
+
+```
+# 4
+
+*Compute the accuracy of the filtered and smoothed probability distributions, and of the most probable path. That is, compute the percentage of the true hidden states that are guessed by each method.*
+
+To compute the accuracy of the filtered and smooth probability distributions one most first use them for predictions. This is done by identifying the observed state with highest probability. This state then becomes the prediction in question. These predictions are then compared with the true state and the portion of matching states then becomes the accuracy.
+
+```{r}
+
+prediction.filter <- apply(t(filtered.prob), MARGIN = 1, which.max)
+prediction.smooth <- apply(t(smooth.prob), MARGIN = 1, which.max)
+
+comparision <-
+  cbind(
+    filter = prediction.filter,
+    smooth = prediction.smooth,
+    path = most.probable.path,
+    true = simulation.result$states
+  )
+
+func.calc.accuracy <- function(prediction, true) {
+  confmtx <- table(true = true, prediction = prediction)
+  return(sum(diag(confmtx)) / sum(confmtx))
+}
+
+trueState = simulation.result$states
+
+accuracy.filter <- func.calc.accuracy(prediction.filter, trueState)
+
+accuracy.smooth <- func.calc.accuracy(prediction.smooth , trueState)
+
+accuracy.path <- func.calc.accuracy(most.probable.path, trueState)
+```
+
+The accuracy score for each method is presented below.
+
+```{r}
+print("Accuracy score for each method.")
+print(paste("Filter:",accuracy.filter))
+print(paste("Smooth:",accuracy.smooth))
+print(paste("Most probable path:",accuracy.path))
+```
+
+
+
+# 5
+
+*Repeat the previous exercise with different simulated samples. In general, the smoothed distributions should be more accurate than the filtered distributions. Why? In general, the smoothed distributions should be more accurate than the most probable paths, too. Why?*
+
+Doing the simulation again but with a different seed. Then calculating the filtered and smooth probability distributions and also the most probable path. Accuracy is calculated as described in the previous task. 
+
+```{r}
+
+## Different seed
+set.seed(2127)
+
+simulation.result <- simHMM(hmm.model, 100)
+
+observations <- simulation.result$observation
+
+most.probable.path <- viterbi(hmm.model, observations)
+
+
+log.forward.probabilities <- forward(hmm.model, observations)
+
+forward.probabilities <- exp(log.forward.probabilities)
+
+log.backward.probabilities <- backward(hmm.model, observations)
+
+backward.probabilities <- exp(log.backward.probabilities)
+
+filtered.prob <- func.filter(forward.probabilities)
+
+smooth.prob <-
+  func.smooth(forward.probabilities, backward.probabilities)
+
+
+prediction.filter <- apply(t(filtered.prob), MARGIN = 1, which.max)
+prediction.smooth <- apply(t(smooth.prob), MARGIN = 1, which.max)
+
+trueState = simulation.result$states
+
+accuracy.filter.2 <-
+  func.calc.accuracy(prediction.filter, trueState)
+
+accuracy.smooth.2 <-
+  func.calc.accuracy(prediction.smooth , trueState)
+
+accuracy.path.2 <- func.calc.accuracy(most.probable.path, trueState)
+
+```
+The results from the new simulation is presented below.
+
+```{r}
+simulation.result
+```
+
+
+The accuracy score for each method is presented below.
+
+```{r}
+print("Accuracy score for each method (simulations with new seed).")
+print(paste("Filter:",accuracy.filter.2))
+print(paste("Smooth:",accuracy.smooth.2))
+print(paste("Most probable path:",accuracy.path.2))
+```
+
+# 6
+
+*Is it true that the more observations you have the better you know where the robot is?*
+
+To test this hypothesis a new simulation run with the same seed as in the previous task is executed. However, this time 300 steps are simulated. The filtered and smooth probability distributions are calculated and then the entropy of these distributions are compared with the entropy of the distributions in the previous task. A lower entropy would correlate to a better prediction since the distribution is the spread of a shorter interval. The accuracy scores from the previous run are also compared to the scores in this run.
+
+```{r}
+
+set.seed(2127)
+
+simulation.result.more <- simHMM(hmm.model, 300)
+
+simulation.result.more
+
+observations.more <- simulation.result.more$observation
+
+most.probable.path.more <- viterbi(hmm.model, observations.more)
+
+
+log.forward.probabilities.more <-
+  forward(hmm.model, observations.more)
+
+forward.probabilities.more <- exp(log.forward.probabilities.more)
+
+log.backward.probabilities.more <-
+  backward(hmm.model, observations.more)
+
+backward.probabilities.more <- exp(log.backward.probabilities.more)
+
+filtered.prob.more <- func.filter(forward.probabilities.more)
+
+smooth.prob.more <-
+  func.smooth(forward.probabilities.more, backward.probabilities.more)
+
+
+prediction.filter.more <-
+  apply(t(filtered.prob.more), MARGIN = 1, which.max)
+prediction.smooth.more <-
+  apply(t(smooth.prob.more), MARGIN = 1, which.max)
+
+trueState.more = simulation.result.more$states
+
+accuracy.filter.more <-
+  func.calc.accuracy(prediction.filter.more, trueState.more)
+
+accuracy.smooth.more <-
+  func.calc.accuracy(prediction.smooth.more , trueState.more)
+
+accuracy.path.more <-
+  func.calc.accuracy(most.probable.path.more, trueState.more)
+
+```
+
+```{r}
+print("Comparing entropy")
+print(paste("Entropy filtered (100 steps):",entropy.empirical(filtered.prob)))
+print(paste("Entropy filtered (300 steps):",entropy.empirical(filtered.prob.more)))
+print(paste("Entropy smooth (100 steps):",entropy.empirical(smooth.prob)))
+print(paste("Entropy smooth (300 steps):",entropy.empirical(smooth.prob.more)))
+```
+
+```{r}
+print("Comparing accuracy")
+print(paste("Accuracy filtered (100 steps):",accuracy.filter.2))
+print(paste("Accuracy filtered (300 steps):",accuracy.filter.more))
+print(paste("Accuracy smooth (100 steps):",accuracy.smooth.2))
+print(paste("Accuracy smooth (300 steps):",accuracy.smooth.more))
+print(paste("Accuracy most probable path (100 steps):",accuracy.path.2))
+print(paste("Accuracy most probable path (300 steps):",accuracy.path.more))
+```
+
+From the presented calculations above it can be concluded that more observations does not equal better accuracy of where the robot is.
+
+# 7
+
+*Consider any of the samples above of length 100. Compute the probabilities of the hidden states for the time step 101.*
+
+To calculate the 101 step a matrix multiplication is used. The matrix $\pi$ (100:th step) is multiplied by the transition probability matrix $P_{i,j}$ as $\pi P_{i,j}$ 
+
+$\pi$ is:
+
+```{r}
+filtered.prob[,100]
+```
+
+and $P_{i,j}$ is:
+
+```{r}
+transProbs
+```
+
+The probabilities for step 101 are:
+
+```{r}
+# TASK 7
+
+## "Taking" step 101
+step.101 <-  filtered.prob[,100]  %*% transProbs
+t(step.101)
 ```
 
 
