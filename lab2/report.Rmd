@@ -93,6 +93,10 @@ simulation.result
 
 *Discard the hidden states from the sample obtained above. Use the remaining observations to compute the filtered and smoothed probability distributions for each of the 100 time points. Compute also the most probable path.*
 
+When computing the filtered distribution the formal $p(z^t|x^{0\colon t})=\alpha (z^t)/(\sum_{z^t}\alpha (z^t))$ is used. For the smooting distribution the formula $p( z^T|x^{0\colon T}) =(\alpha (z^t) \beta (z^t))/(\sum_{z^t}\alpha (z^t)  \beta (z^t))$ is used.
+
+*The formulas above are from slide 11 in lecture 6.*
+
 ```{r}
 
 observations <- simulation.result$observation
@@ -237,7 +241,9 @@ print(paste("Smooth:",accuracy.smooth.2))
 print(paste("Most probable path:",accuracy.path.2))
 ```
 
-Smoothing is better than filtered and most probable path since smooth uses all observations (previous and coming) while filtered only uses previous observations.
+Smoothing is better than filtered since smooth uses all observations (previous and coming) while filtered only uses previous observations. The multiplication in $\alpha (z^t) \beta (z^t)$ amplify values that are large for both $\alpha (z^t)$ and $\beta (z^t)$. Values that are only large for one of the terms (meaning that the other term does not "agree" with the probability distribution) will reveice less of the probabilty mass after the smoothing.
+
+The most probable path is calculated using the Viterbi-algorithm. This algorithm also just uses information from previous steps which is why it is not as good at doing predictions as the smoothing method.
 
 # 6
 
@@ -310,7 +316,7 @@ print(paste("Accuracy most probable path (100 steps):",accuracy.path.2))
 print(paste("Accuracy most probable path (300 steps):",accuracy.path.more))
 ```
 
-From the presented calculations above it can be concluded that more observations does not equal better accuracy of where the robot is.
+From the presented calculations above it can be concluded that more observations does not necessarily equal better accuracy of where the robot is.
 
 # 7
 
