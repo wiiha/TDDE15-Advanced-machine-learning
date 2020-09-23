@@ -70,17 +70,17 @@ most.probable.path <- viterbi(hmm.model, observations)
 
 func.filter <- function(alphas) {
   outdata <- c()
-  for (r in 1:nrow(alphas)) {
-    outdata <- rbind(outdata, alphas[r, ] / sum(alphas[r, ]))
+  for (c in 1:ncol(alphas)) {
+    outdata <- cbind(outdata, alphas[,c ] / sum(alphas[,c ]))
   }
   return(outdata)
 }
 
 func.smooth <- function(alphas, betas) {
   outdata <- c()
-  for (r in 1:nrow(alphas)) {
+  for (c in 1:ncol(alphas)) {
     outdata <-
-      rbind(outdata, (alphas[r, ] * betas[r, ]) / sum((alphas[r, ] * betas[r, ])))
+      cbind(outdata, (alphas[,c ] * betas[,c ]) / sum((alphas[,c ] * betas[,c ])))
   }
   return(outdata)
 }

@@ -94,6 +94,7 @@ simulation.result
 *Discard the hidden states from the sample obtained above. Use the remaining observations to compute the filtered and smoothed probability distributions for each of the 100 time points. Compute also the most probable path.*
 
 ```{r}
+
 observations <- simulation.result$observation
 
 most.probable.path <- viterbi(hmm.model, observations)
@@ -101,17 +102,17 @@ most.probable.path <- viterbi(hmm.model, observations)
 
 func.filter <- function(alphas) {
   outdata <- c()
-  for (r in 1:nrow(alphas)) {
-    outdata <- rbind(outdata, alphas[r, ] / sum(alphas[r, ]))
+  for (c in 1:ncol(alphas)) {
+    outdata <- cbind(outdata, alphas[,c ] / sum(alphas[,c ]))
   }
   return(outdata)
 }
 
 func.smooth <- function(alphas, betas) {
   outdata <- c()
-  for (r in 1:nrow(alphas)) {
+  for (c in 1:ncol(alphas)) {
     outdata <-
-      rbind(outdata, (alphas[r, ] * betas[r, ]) / sum((alphas[r, ] * betas[r, ])))
+      cbind(outdata, (alphas[,c ] * betas[,c ]) / sum((alphas[,c ] * betas[,c ])))
   }
   return(outdata)
 }
@@ -235,6 +236,8 @@ print(paste("Filter:",accuracy.filter.2))
 print(paste("Smooth:",accuracy.smooth.2))
 print(paste("Most probable path:",accuracy.path.2))
 ```
+
+Smoothing is better than filtered and most probable path since smooth uses all observations (previous and coming) while filtered only uses previous observations.
 
 # 6
 
