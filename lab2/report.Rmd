@@ -135,6 +135,27 @@ smooth.prob <-
   func.smooth(forward.probabilities, backward.probabilities)
 
 ```
+
+Below is the first 7 time steps for each probability distribution.
+
+**Filtered:**
+
+```{r}
+print(filtered.prob[,1:7])
+```
+**Smooth:**
+
+```{r}
+print(smooth.prob[,1:7])
+```
+
+The first 10 steps of the most probable path are:
+
+```{r}
+print(most.probable.path[1:10])
+```
+
+
 # 4
 
 *Compute the accuracy of the filtered and smoothed probability distributions, and of the most probable path. That is, compute the percentage of the true hidden states that are guessed by each method.*
@@ -335,6 +356,7 @@ and $P_{i,j}$ is:
 ```{r}
 transProbs
 ```
+\newpage
 
 The probabilities for step 101 are:
 
