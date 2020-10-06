@@ -77,6 +77,16 @@ GreedyPolicy <- function(x, y){
   
   # Your code here.
   
+  ## Find all max values of state x,y
+  indexMaxVals <- which(q_table[x,y,] == max(q_table[x,y,]))
+  
+  if(length(indexMaxVals)== 1) return( indexMaxVals)
+  
+  ## There were multiple actions with the same action value
+  
+  randomIndex <- sample(1:length(indexMaxVals),1)
+  return(indexMaxVals[randomIndex])
+  
 }
 
 EpsilonGreedyPolicy <- function(x, y, epsilon){
