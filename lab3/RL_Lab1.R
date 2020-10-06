@@ -135,41 +135,67 @@ transition_model <- function(x, y, action, beta){
   return (foo)
 }
 
-q_learning <- function(start_state, epsilon = 0.5, alpha = 0.1, gamma = 0.95, 
-                       beta = 0){
-  
-  # Perform one episode of Q-learning. The agent should move around in the 
-  # environment using the given transition model and update the Q-table.
-  # The episode ends when the agent reaches a terminal state.
-  # 
-  # Args:
-  #   start_state: array with two entries, describing the starting position of the agent.
-  #   epsilon (optional): probability of acting greedily.
-  #   alpha (optional): learning rate.
-  #   gamma (optional): discount factor.
-  #   beta (optional): slipping factor.
-  #   reward_map (global variable): a HxW array containing the reward given at each state.
-  #   q_table (global variable): a HxWx4 array containing Q-values for each state-action pair.
-  # 
-  # Returns:
-  #   reward: reward received in the episode.
-  #   correction: sum of the temporal difference correction terms over the episode.
-  #   q_table (global variable): Recall that R passes arguments by value. So, q_table being
-  #   a global variable can be modified with the superassigment operator <<-.
-  
-  # Your code here.
-  
-  repeat{
-    # Follow policy, execute action, get reward.
+q_learning <-
+  function(start_state,
+           epsilon = 0.5,
+           alpha = 0.1,
+           gamma = 0.95,
+           beta = 0) {
+    # Perform one episode of Q-learning. The agent should move around in the
+    # environment using the given transition model and update the Q-table.
+    # The episode ends when the agent reaches a terminal state.
+    #
+    # Args:
+    #   start_state: array with two entries, describing the starting position of the agent.
+    #   epsilon (optional): probability of acting greedily.
+    #   alpha (optional): learning rate.
+    #   gamma (optional): discount factor.
+    #   beta (optional): slipping factor.
+    #   reward_map (global variable): a HxW array containing the reward given at each state.
+    #   q_table (global variable): a HxWx4 array containing Q-values for each state-action pair.
+    #
+    # Returns:
+    #   reward: reward received in the episode.
+    #   correction: sum of the temporal difference correction terms over the episode.
+    #   q_table (global variable): Recall that R passes arguments by value. So, q_table being
+    #   a global variable can be modified with the superassigment operator <<-.
     
-    # Q-table update.
+    # Your code here.
+    state <- start_state
+    episode_correction <- 0
+    repeat {
+      # Follow policy, execute action, get reward.
+      
+      x <- state[1]
+      y <- state[2]
+      # print(paste("x:", x, "y:", y))
+      action <- EpsilonGreedyPolicy(x, y, epsilon)
+      # print(paste("action:", action))
+      newState <- transition_model(x, y, action, beta)
+      newX <- newState[1]
+      newY <- newState[2]
+      # print(paste("newX:", newX, "newY:", newY))
+      reward <- reward_map[newX, newY]
+      # print(paste("reward:", reward))
+      
+      # Q-table update.
+      temporalDifferenceCorrectionTerm <-
+        (reward + gamma * q_table[newX, newY, which.max(q_table[newX, newY, ])] - q_table[x, y, action])
+      
+      q_table[x, y, action] <<-
+        q_table[x, y, action] + alpha * temporalDifferenceCorrectionTerm
+      
+      episode_correction <-
+        episode_correction + temporalDifferenceCorrectionTerm
+      
+      state <- newState
+      
+      if (reward != 0)
+        # End episode.
+        return (c(reward, episode_correction))
+    }
     
-    if(reward!=0)
-      # End episode.
-      return (c(reward,episode_correction))
   }
-  
-}
 
 #####################################################################################################
 # Q-Learning Environments
@@ -194,6 +220,11 @@ for(i in 1:10000){
   if(any(i==c(10,100,1000,10000)))
     vis_environment(i)
 }
+
+## ANSWER 2.2:
+### After the 10 first episodes the agent has identified most of the "edges" for the negative reward.
+### Yes, it takes the smallest possible number of steps.
+### Yes, it does. If it had not, one can set epsilon to a value closer to 1 and thereby making the agent do more exploration.
 
 # Environment B (the effect of epsilon and gamma)
 
@@ -230,7 +261,9 @@ for(j in c(0.5,0.75,0.95)){
   }
   
   vis_environment(i, gamma = j)
+  Sys.sleep(5)
   plot(MovingAverage(reward,100),type = "l")
+  Sys.sleep(5)
   plot(MovingAverage(correction,100),type = "l")
 }
 
@@ -246,9 +279,16 @@ for(j in c(0.5,0.75,0.95)){
   }
   
   vis_environment(i, epsilon = 0.1, gamma = j)
+  Sys.sleep(5)
   plot(MovingAverage(reward,100),type = "l")
+  Sys.sleep(5)
   plot(MovingAverage(correction,100),type = "l")
+  Sys.sleep(5)
 }
+
+## ANSWER 2.3:
+### With higher epsilon more states are visited. When setting a larger gamma, meaning that the value of the new q_state is less discounted, the agent is able to find the larger reward.
+## One can noticed that a low epsilon will inhibit the Agent from finding the larger reward even when gamma is close to 1.
 
 # Environment C (the effect of beta).
 
@@ -271,3 +311,7 @@ for(j in c(0,0.2,0.4,0.66)){
   
   vis_environment(i, gamma = 0.6, beta = j)
 }
+
+## ANSWER 2.4
+### Beta is the "slipping factor" which can make the agent go into another direction than intended during the
+### transition step. When beta is large the identified path is not always the optimal.
