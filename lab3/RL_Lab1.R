@@ -64,27 +64,27 @@ vis_environment <- function(iterations=0, epsilon = 0.5, alpha = 0.1, gamma = 0.
   
 }
 
-GreedyPolicy <- function(x, y){
-  
+GreedyPolicy <- function(x, y) {
   # Get a greedy action for state (x,y) from q_table.
   #
   # Args:
   #   x, y: state coordinates.
   #   q_table (global variable): a HxWx4 array containing Q-values for each state-action pair.
-  # 
+  #
   # Returns:
   #   An action, i.e. integer in {1,2,3,4}.
   
   # Your code here.
   
   ## Find all max values of state x,y
-  indexMaxVals <- which(q_table[x,y,] == max(q_table[x,y,]))
+  indexMaxVals <- which(q_table[x, y, ] == max(q_table[x, y, ]))
   
-  if(length(indexMaxVals)== 1) return( indexMaxVals)
+  if (length(indexMaxVals) == 1)
+    return(indexMaxVals)
   
   ## There were multiple actions with the same action value
   
-  randomIndex <- sample(1:length(indexMaxVals),1)
+  randomIndex <- sample(1:length(indexMaxVals), 1)
   return(indexMaxVals[randomIndex])
   
 }
@@ -101,6 +101,15 @@ EpsilonGreedyPolicy <- function(x, y, epsilon){
   #   An action, i.e. integer in {1,2,3,4}.
   
   # Your code here.
+  
+  ## Decide if select greedy or random
+  if(runif(1) < epsilon){
+    # Random
+    return(sample(1:4,1))
+  }else{
+    # Greedy
+    return(GreedyPolicy(x,y))
+  }
   
 }
 
