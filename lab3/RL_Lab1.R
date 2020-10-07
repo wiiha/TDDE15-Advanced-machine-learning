@@ -221,10 +221,6 @@ for(i in 1:10000){
     vis_environment(i)
 }
 
-## ANSWER 2.2:
-### After the 10 first episodes the agent has identified most of the "edges" for the negative reward.
-### Yes, it takes the smallest possible number of steps.
-### Yes, it does. If it had not, one can set epsilon to a value closer to 1 and thereby making the agent do more exploration.
 
 # Environment B (the effect of epsilon and gamma)
 
@@ -286,10 +282,6 @@ for(j in c(0.5,0.75,0.95)){
   Sys.sleep(5)
 }
 
-## ANSWER 2.3:
-### With higher epsilon more states are visited. When setting a larger gamma, meaning that the value of the new q_state is less discounted, the agent is able to find the larger reward.
-## One can noticed that a low epsilon will inhibit the Agent from finding the larger reward even when gamma is close to 1.
-
 # Environment C (the effect of beta).
 
 H <- 3
@@ -311,7 +303,3 @@ for(j in c(0,0.2,0.4,0.66)){
   
   vis_environment(i, gamma = 0.6, beta = j)
 }
-
-## ANSWER 2.4
-### Beta is the "slipping factor" which can make the agent go into another direction than intended during the
-### transition step. When beta is large the identified path is not always the optimal.

@@ -253,10 +253,6 @@ for(i in 1:5000){
 
 show_validation(5000) 
 
-## ANSWER 2.6:
-### Yes the agent has learned a good policy because where ever you start you will reach the goal state.
-### Further the training goal states are close to the validation goal states and therby making it possible
-### for the agent to reach them.
 
 # Environment E (training with top row goal positions)
 
@@ -274,10 +270,3 @@ for(i in 1:5000){
 }
 
 show_validation(5000) 
-
-## ANSWER 2.7:
-### No, the policy is bad since it will no always find the goal using it.
-### In the training data all of the goals are in the top row. This leads the network to "put extra weight"
-### to this part of the environment. The network becomes biased towards these area of the environment.
-### Since the validation goals can be in rows other than the ones in the training set. The network
-### Will develop policies that do not find the goals as accuralty.
