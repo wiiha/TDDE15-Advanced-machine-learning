@@ -1,7 +1,7 @@
 ---
 title: "TDDE15 - Lab 3"
 author: "Wilhelm Hansson (wilha431)"
-date: "2020-10-07"
+date: "2020-10-08"
 output: pdf_document
 ---
 
@@ -26,9 +26,11 @@ After 10 episodes the q-table have started to change.
 
 The agent has begun to learn to avoid the negative rewards. However it is just on the same side as the starting state (3,1).
 
-*Is the final greedy policy (after 10000 episodes) optimal? Why / Why not ?*
-
 ![Q-table for environment A after 10000 episodes](./pictures-1/5.png)
+
+\newpage
+
+*Is the final greedy policy (after 10000 episodes) optimal? Why / Why not ?*
 
 No the final greedy policy is not optimal. Since for example starting in state (5,3) would lead an agent using this policy on a longer route than needed.
 
@@ -44,9 +46,26 @@ The picture below displays environment B. The agent starts in state (4,1).
 
 *Your task is to investigate how the* $\epsilon$ *and* $\gamma$ *parameters affect the learned policy by running 30000 episodes of Q-learning with* $\epsilon = 0.1, 0.5$ $\gamma = 0.5, 0.75, 0.95$ $\alpha = 0.1$ $\beta = 0$.
 
+\newpage
+
+![](./pictures-1/7.png)
+
+![](./pictures-1/10.png)
+
+![](./pictures-1/13.png)
+
+![](./pictures-1/16.png)
+
+![](./pictures-1/19.png)
+
+![](./pictures-1/22.png)
+
+
+\newpage
+
 **Observations:**
 
-+ With higher $\epsilon$ more states are visited. When setting a larger $\gamma$, meaning that the value of the new q-state is less discounted, the agent is able to find the larger reward.
++ With higher $\epsilon$ more states are visited. When setting a larger $\gamma$, meaning that the value of the new q-state is less discounted, the agent is able to find the larger reward since it values it more.
 + One can noticed that a low $\epsilon$ will inhibit the Agent from finding the larger reward even when $\gamma$ is close to 1.
 
 # Environment C
@@ -71,7 +90,9 @@ In the pictures below the developed policy for each combination of parameters is
 
 **Observations:**
 
-+ $\beta$ is the "slipping factor" which can make the agent go into another direction than intended during the transition step. When $\beta$ is large the identified path is not the optimal.
++ $\beta$ is the "slipping factor" which can make the agent go into another direction than intended during the transition step.
++ When $\beta$ is large the identified path is not the optimal. The agent "avoids" using row 2 since it has slipped onto the negative rewards on row 1.
+
 
 ---
 
@@ -85,11 +106,11 @@ val_goals <- list(c(4,2), c(4,4), c(3,2), c(3,3), c(2,3), c(2,4), c(1,1), c(1,4)
 ```
 
 
-*The code is provided by provided in the lab. It will run 5000 episodes of the REINFORCE algorithm using the values $\beta = 0$ and $\gamma = 0.95$. Each training episode uses a random position from `train_goals = ` `r train_goals`.
+The code is provided in the lab. It will run 5000 episodes of the REINFORCE algorithm using the values $\beta = 0$ and $\gamma = 0.95$. Each training episode uses a random position from `train_goals = ` `r train_goals`.
 
-When training is completed, the code validates the learned policy for the goal positions in`val_goals = ` `r val_goals`.
+When training is completed, the code validates the policies created byt the neural network for the goal positions in `val_goals = ` `r val_goals`.
 
-Below is the policys for each of the validation goals.
+Below is the policies for each of the validation goals.
 
 ![](./pictures-2/9.png)
 
@@ -107,12 +128,16 @@ Below is the policys for each of the validation goals.
 
 ![](./pictures-2/16.png)
 
+\newpage
 
-*Has the agent learned a good policy? Why / Why not ?*
+*Has the agent learned a good policy? Why / Why not?*
 
 Yes the agent has learned a good policy because where ever you start you will reach the goal state. Further the training goal states are spread out in the environment and selected by random thereby making it possible for the agent to learn some degree of generalization and not become biased.
 
-*Could you have used the Q-learning algorithm to solve this task ?*
+*Could you have used the Q-learning algorithm to solve this task?*
+
+No, the Q-learning algorithm will not work since it can only develop policies for targets it has already seen. On the other hand the neural network can generalize and thereby develop a policy for previously "unseen" goals.
+
 
 # Environment E
 
@@ -128,7 +153,7 @@ Training goals: `train_goals = ` `r train_goals`.
 
 Validation goals: `val_goals = ` `r val_goals`.
 
-Below is the policys for each of the validation goals.
+Below is the policies for each of the validation goals.
 
 ![](./pictures-2/E-4.png)
 
@@ -138,11 +163,11 @@ Below is the policys for each of the validation goals.
 
 *Has the agent learned a good policy? Why / Why not ?*
 
-No, the policy is bad since it will no always find the goal using it.
+No, the policy is bad since it will not always find the goal using it.
 
 *If the results obtained for environments D and E differ, explain why.*
 
-In the training data all of the goals are in the top row. This leads the network to "put extra weight" to this part of the environment. The network becomes biased towards this area of the environment. The model can be said to be overfitted towards rewards/ goals in the top row. The network will develop policies that do not find the goals as accurately or at all.
+In the training data for environment E all of the goals are in the top row. This leads the network to "put extra weight" to this part of the environment. The network becomes biased towards this area. The model can be said to be overfitted towards rewards/ goals in the top row. The network will develop policies that do not find the goals as accurately or at all.
 
 \newpage
 
