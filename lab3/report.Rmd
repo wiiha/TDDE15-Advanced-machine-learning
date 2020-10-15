@@ -16,19 +16,27 @@ knitr::opts_chunk$set(echo = FALSE)
 
 The picture below displays environment A. The agent starts in state (3,1).
 
-![Environment A](./pictures-1/1.png)
+```{r, image_container_2, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("./pictures-1/1.png")
+```
 
 After 10 episodes the q-table have started to change.
 
-![Q-table for environment A after 10 episodes](./pictures-1/2.png)
+*Q-table for environment A after 10 episodes*
+
+```{r, image_container_3, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("./pictures-1/2.png")
+```
 
 *What has the agent learned after the first 10 episodes ?*
 
 The agent has begun to learn to avoid the negative rewards. However it is just on the same side as the starting state (3,1).
 
-![Q-table for environment A after 10000 episodes](./pictures-1/5.png)
+*Q-table for environment A after 10000 episodes*
 
-\newpage
+```{r, image_container_4, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("./pictures-1/5.png")
+```
 
 *Is the final greedy policy (after 10000 episodes) optimal? Why / Why not ?*
 
@@ -42,26 +50,20 @@ Yes, it does. If it had not, one can set epsilon to a value closer to 1 and ther
 
 The picture below displays environment B. The agent starts in state (4,1).
 
-![Environment B](./pictures-1/6.png)
+```{r, image_container_5, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("./pictures-1/6.png")
+```
 
 *Your task is to investigate how the* $\epsilon$ *and* $\gamma$ *parameters affect the learned policy by running 30000 episodes of Q-learning with* $\epsilon = 0.1, 0.5$ $\gamma = 0.5, 0.75, 0.95$ $\alpha = 0.1$ $\beta = 0$.
 
-\newpage
-
-![](./pictures-1/7.png)
-
-![](./pictures-1/10.png)
-
-![](./pictures-1/13.png)
-
-![](./pictures-1/16.png)
-
-![](./pictures-1/19.png)
-
-![](./pictures-1/22.png)
-
-
-\newpage
+```{r, echo=FALSE, fig.show='hold', fig.align='center', out.width="49%"}
+knitr::include_graphics("./pictures-1/7.png")
+knitr::include_graphics("./pictures-1/10.png")
+knitr::include_graphics("./pictures-1/13.png")
+knitr::include_graphics("./pictures-1/16.png")
+knitr::include_graphics("./pictures-1/19.png")
+knitr::include_graphics("./pictures-1/22.png")
+```
 
 **Observations:**
 
@@ -72,7 +74,9 @@ The picture below displays environment B. The agent starts in state (4,1).
 
 The picture below displays environment C. The agent starts in state (1,1).
 
-![Environment B](./pictures-1/25.png)
+```{r, image_container_6, echo=FALSE, out.width='80%', fig.align='center'}
+knitr::include_graphics("./pictures-1/25.png")
+```
 
 *Investigate how the* $\beta$ *parameter affects the learned policy by running 10000 episodes of Q-learning with* $\beta = 0, 0.2, 0.4, 0.66$, $\epsilon = 0.5$, $\gamma = 0.6$, *and* $\alpha = 0.1$.
 
@@ -80,13 +84,12 @@ The picture below displays environment C. The agent starts in state (1,1).
 
 In the pictures below the developed policy for each combination of parameters is presented.
 
-![](./pictures-1/26.png)
-
-![](./pictures-1/27.png)
-
-![](./pictures-1/28.png)
-
-![](./pictures-1/29.png)
+```{r, echo=FALSE, fig.show='hold', fig.align='center', out.width="49%"}
+knitr::include_graphics("./pictures-1/26.png")
+knitr::include_graphics("./pictures-1/27.png")
+knitr::include_graphics("./pictures-1/28.png")
+knitr::include_graphics("./pictures-1/29.png")
+```
 
 **Observations:**
 
@@ -112,23 +115,16 @@ When training is completed, the code validates the policies created byt the neur
 
 Below is the policies for each of the validation goals.
 
-![](./pictures-2/9.png)
-
-![](./pictures-2/10.png)
-
-![](./pictures-2/11.png)
-
-![](./pictures-2/12.png)
-
-![](./pictures-2/13.png)
-
-![](./pictures-2/14.png)
-
-![](./pictures-2/15.png)
-
-![](./pictures-2/16.png)
-
-\newpage
+```{r, echo=FALSE, fig.show='hold', fig.align='center', out.width="49%"}
+knitr::include_graphics("./pictures-2/9.png")
+knitr::include_graphics("./pictures-2/10.png")
+knitr::include_graphics("./pictures-2/11.png")
+knitr::include_graphics("./pictures-2/12.png")
+knitr::include_graphics("./pictures-2/13.png")
+knitr::include_graphics("./pictures-2/14.png")
+knitr::include_graphics("./pictures-2/15.png")
+knitr::include_graphics("./pictures-2/16.png")
+```
 
 *Has the agent learned a good policy? Why / Why not?*
 
@@ -155,11 +151,12 @@ Validation goals: `val_goals = ` `r val_goals`.
 
 Below is the policies for each of the validation goals.
 
-![](./pictures-2/E-4.png)
+```{r, echo=FALSE, fig.show='hold', fig.align='center', out.width="49%"}
+knitr::include_graphics("./pictures-2/E-4.png")
+knitr::include_graphics("./pictures-2/E-5.png")
+knitr::include_graphics("./pictures-2/E-6.png")
 
-![](./pictures-2/E-5.png)
-
-![](./pictures-2/E-6.png)
+```
 
 *Has the agent learned a good policy? Why / Why not ?*
 
