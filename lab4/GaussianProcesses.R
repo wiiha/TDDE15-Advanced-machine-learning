@@ -63,7 +63,8 @@ plotGPPrior <- function(sigmaF, l, nSim){
 }
 
 manipulate(
-  plotGPPrior(sigmaF, l, nSim = 10),
+  plotGPPrior(sigmaF, l, nSim),
   sigmaF = slider(0, 2, step=0.1, initial = 1, label = "SigmaF"),
-  l = slider(0, 2, step=0.1, initial = 1, label = "Length scale, l")
+  l = slider(0, 2, step=0.1, initial = 1, label = "Length scale, l"),
+  nSim = slider(0, 20, step=1, initial = 1, label = "nSim")
 )
