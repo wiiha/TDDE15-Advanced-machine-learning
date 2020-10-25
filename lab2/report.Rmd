@@ -262,9 +262,9 @@ print(paste("Smooth:",accuracy.smooth.2))
 print(paste("Most probable path:",accuracy.path.2))
 ```
 
-Smoothing is better than filtered since smooth uses all observations (previous and coming) while filtered only uses previous observations. The multiplication in $\alpha (z^t) \beta (z^t)$ amplify values that are large for both $\alpha (z^t)$ and $\beta (z^t)$. Values that are only large for one of the terms (meaning that the other term does not "agree" with the probability distribution) will reveice less of the probabilty mass after the smoothing.
+Smoothing is better than filtered since smooth uses all observations (previous and coming) while filtered only uses previous observations. The multiplication in $\alpha (z^t) \beta (z^t)$ amplify values that are large for both $\alpha (z^t)$ and $\beta (z^t)$. Values that are only large for one of the terms (meaning that the other term does not "agree" with the probability distribution) will receive less of the probability mass after the smoothing.
 
-The most probable path is calculated using the Viterbi-algorithm. This algorithm also just uses information from previous steps which is why it is not as good at doing predictions as the smoothing method.
+When comparing the accuracy of the smoothed distribution with the most probable path the smoothed distribution should have a better accuracy here as well. This is because the viterbi algorithm (calculating the most probable sequence) takes neighbors in consideration and imposes an additional constraint. The smoothed distribution calculation on the other hand does not take sequence into account and looks at each time step individually, maximizing its marginal probability. Hence it makes sense that it has higher accuracy since “accuracy” in this case does not care about the sequence, but compares each estimated state with the true state individually.
 
 # 6
 
