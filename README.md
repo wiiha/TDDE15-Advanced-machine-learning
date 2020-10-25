@@ -13,6 +13,9 @@ This repo is for the course TDDE15 (Advanced Machine Learning) done during the a
 
 ### Lab 3
 
+- Q-learning
 - Reinforcement Learning
 
-*This repo is a work in progress...*
+### Lab 4
+
+- Gaussian processes
